@@ -6,6 +6,9 @@ loader.setup # ready!
 
 require "dry-configurable"
 require "active_support"
+require "active_support/core_ext/hash/conversions"
+require "uri"
+require "cgi"
 
 # Main module containing the settings and top-level methods
 module Finviz

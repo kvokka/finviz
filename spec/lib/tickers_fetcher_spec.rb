@@ -30,7 +30,7 @@ module Finviz
       context "it build right uri with uri option" do
         let(:correct) do
           "https://finviz.com/screener.ashx?f%5B%5D=geo_usa%2Cind_stocksonly%2C" \
-          "sh_curvol_o500%2Csh_relvol_o2&ft%5B%5D=4&r%5B%5D=61&v=411"
+          "sh_curvol_o500%2Csh_relvol_o2&ft%5B%5D=4&v=411"
         end
         %w[
           https://finviz.com/screener.ashx?v=411&f=geo_usa,ind_stocksonly,sh_curvol_o500,sh_relvol_o2&ft=4&r=61

@@ -7,6 +7,7 @@ loader.setup # ready!
 require "dry-configurable"
 require "active_support"
 require "active_support/core_ext/hash/conversions"
+require "nokogiri"
 require "uri"
 require "cgi"
 
@@ -17,6 +18,7 @@ module Finviz
   extend Dry::Configurable
 
   setting :timeout, 10 # seconds
+  setting :concurrency, 10
 
   class << self
     def tickers(**opts)

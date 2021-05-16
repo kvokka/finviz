@@ -29,7 +29,9 @@ Gem::Specification.new do |spec|
 
   # Uncomment to register a new dependency of your gem
   spec.add_dependency "activesupport", "~> 6.1.0"
+  spec.add_dependency "async-http", "~> 0.56.0"
   spec.add_dependency "dry-configurable", "~> 0.12.0"
+  spec.add_dependency "nokogiri", "~> 1.11.0"
   spec.add_dependency "zeitwerk", "~> 2.4.0"
 
   # For more information and examples about making a new gem, checkout our

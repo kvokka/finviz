@@ -1,13 +1,70 @@
 version: 2.1
-jobs:
-  build:
-    docker:
-      - image: ruby:2.7.2
+defaults: &defaults
+  docker:
+    - image: circleci/ruby:2.6.3-stretch-node
+      environment:
+        BUNDLE_PATH: vendor/bundle
+  # executor: ruby/default
+commands:
+  prepare:
+    description: "Common preparation steps"
     steps:
       - checkout
+      - restore_cache:
+          keys:
+            - v1-dependencies-{{ checksum "Gemfile.lock" }}
+            # fallback to using the latest cache if no exact match is found
+            - v1-dependencies-
       - run:
-          name: Run the default task
+          name: install bundler
           command: |
             gem install bundler -v 2.2.16
-            bundle install
-            bundle exec rake
+
+      - run:
+          name: install dependencies
+          command: |
+            bundle config set path 'vendor/bundle'
+            bundle install --jobs=4 --retry=3
+      - save_cache:
+          paths:
+            - ./vendor/bundle
+          key: v1-dependencies-{{ checksum "Gemfile.lock" }}
+
+jobs:
+  rspec:
+    <<: *defaults
+    steps:
+      - prepare
+      - run:
+          name: Rspec
+          command: |
+            mkdir /tmp/test-results
+
+            TEST_FILES="$(circleci tests glob "spec/**/*_spec.rb" | circleci tests split --split-by=timings)"
+
+            bundle exec rspec --format progress \
+                            --format RspecJunitFormatter \
+                            --out /tmp/test-results/rspec.xml \
+                            --tag ~type:performance \
+                            $TEST_FILES
+      # collect reports
+      - store_test_results:
+          path: /tmp/test-results
+      - store_artifacts:
+          path: /tmp/test-results
+          destination: test-results
+
+  rubocop:
+    <<: *defaults
+    steps:
+      - prepare
+      - run:
+          name: Rubocop
+          command: bundle exec rubocop
+
+workflows:
+  version: 2
+  pipeline:
+    jobs:
+      - rspec
+      - rubocop

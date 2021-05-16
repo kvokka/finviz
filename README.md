@@ -1,3 +1,6 @@
+[![CircleCI](https://circleci.com/gh/kvokka/finviz.svg?style=svg&circle-token=804e72e82fd4ccedc8f06cb332cc53d21e83535c)](https://circleci.com/gh/kvokka/finviz)
+[![Gem Version](https://img.shields.io/gem/v/finviz.svg)](https://rubygems.org/gems/finviz)
+
 # Finviz
 
 Unofficial finviz.com API

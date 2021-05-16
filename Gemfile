@@ -7,6 +7,11 @@ gemspec
 
 gem "rake", "~> 13.0"
 
-gem "rspec", "~> 3.0"
+gem "rubocop", "~> 1.14.0", require: false
+gem "rubocop-rake", "~> 0.5.0", require: false
+gem "rubocop-rspec", "~> 2.3.0", require: false
 
-gem "rubocop", "~> 1.12"
+group :test do
+  gem "rspec", ">= 3.10.0", "< 4.0"
+  gem "rspec_junit_formatter"
+end

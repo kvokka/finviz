@@ -30,5 +30,9 @@ module Finviz
     def tickers(**opts)
       TickersFetcher.new(**opts).call
     end
+
+    def quotes(**opts)
+      QuotesFetcher.new(**opts).call
+    end
   end
 end

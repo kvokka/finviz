@@ -30,6 +30,8 @@ module Finviz
       return @remaining_pages if @remaining_pages
 
       max_page = first_page.first.html.css("a.screener-pages").map { |a| a.children.text.to_i }.max
+      return @remaining_pages = [] unless max_page
+
       paths = generate_further_pages(max_page)
       @remaining_pages = Crawler.call(paths: paths)
     end
@@ -40,8 +42,8 @@ module Finviz
         params["f"] = filters&.join(",") if filters&.any?
         params["v"] = finviz_view_type
         params.delete("r") # remove offset if it was provided
-      end.to_query
-      @uri = URI::HTTPS.build(host: base_uri, path: base_path, query: query)
+      end
+      @uri = URI::HTTPS.build(host: base_uri, path: base_path, query: CGI.unescape(URI.encode_www_form(query)))
     end
 
     def base_uri

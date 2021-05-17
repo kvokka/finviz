@@ -24,7 +24,14 @@ Or install it yourself as:
 
 ## Usage
 
-TODO: Write usage instructions here
+### Fetch tickers list from user filter
+
+Since it is more convenient to use web based interface tos et the filter, there
+are 2 options to filter tickers.
+
+```ruby
+
+```
 
 ## Development
 

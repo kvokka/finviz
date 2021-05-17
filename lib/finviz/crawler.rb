@@ -21,8 +21,6 @@ module Finviz
     attr_reader :paths
 
     def fetch
-      return self if paths.empty?
-
       async do
         paths.each do |path|
           response = internet.get(path.to_s, headers)

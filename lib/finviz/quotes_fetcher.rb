@@ -17,7 +17,6 @@ module Finviz
 
     private
 
-    # rubocop:disable Metrics/AbcSize
     def add_stats_to_results
       all_pages.each_with_index do |page, page_number|
         page.html.css(".snapshot-table2").each_with_index do |xpath, selector_offset|
@@ -27,7 +26,6 @@ module Finviz
         end
       end
     end
-    # rubocop:enable Metrics/AbcSize
 
     def add_charts_to_results
       all_pages.each_with_index do |page, page_number|
@@ -58,7 +56,8 @@ module Finviz
     end
 
     def uri(tickers_array)
-      URI::HTTPS.build(host: "finviz.com", path: "/quote.ashx", query: { t: tickers_array.join(",") }.to_query)
+      query = CGI.unescape(URI.encode_www_form({ t: tickers_array.join(",") }))
+      URI::HTTPS.build(host: "finviz.com", path: "/quote.ashx", query: query)
     end
   end
 end

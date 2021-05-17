@@ -25,8 +25,7 @@ module Finviz
 
       context "it build right uri with uri option" do
         let(:correct) do
-          "https://finviz.com/screener.ashx?f%5B%5D=geo_usa%2Cind_stocksonly%2C" \
-          "sh_curvol_o500%2Csh_relvol_o2&ft%5B%5D=4&v=411"
+          "https://finviz.com/screener.ashx?v=411&f=geo_usa,ind_stocksonly,sh_curvol_o500,sh_relvol_o2&ft=4"
         end
         %w[
           https://finviz.com/screener.ashx?v=411&f=geo_usa,ind_stocksonly,sh_curvol_o500,sh_relvol_o2&ft=4&r=61
@@ -44,7 +43,7 @@ module Finviz
 
       context "it build right uri with filters option" do
         let(:correct) do
-          "https://finviz.com/screener.ashx?f=fil1%2Csome2&v=411"
+          "https://finviz.com/screener.ashx?f=fil1,some2&v=411"
         end
         it "works as expected" do
           expect(described_class.new(filters: %w[fil1 some2]).uri.to_s).to eq correct

@@ -8,3 +8,7 @@
 
 - Added tickers fetcher
 - Added quotes fetcher
+
+## [0.2.1] - 2021-05-17
+
+- Add path to quotes fetcher output

@@ -17,7 +17,7 @@ module Finviz
 
   extend Dry::Configurable
 
-  setting :timeout, 10 # seconds
+  setting :timeout, 30 # seconds
   setting :concurrency, 10
 
   class << self

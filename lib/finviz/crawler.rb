@@ -21,6 +21,8 @@ module Finviz
     attr_reader :paths
 
     def fetch
+      return self if paths.empty?
+
       async do
         paths.each do |path|
           semaphore.async do

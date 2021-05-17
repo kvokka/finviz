@@ -18,10 +18,6 @@ module Finviz
           expect { described_class.new filters: ["some"], uri: "http://foo" }.to raise_error StandardError
         end
 
-        it "if nothing useful provided" do
-          expect { described_class.new }.to raise_error StandardError
-        end
-
         it "if unsupported option provided" do
           expect { described_class.new wrong: 42 }.to raise_error StandardError
         end
@@ -52,6 +48,19 @@ module Finviz
         end
         it "works as expected" do
           expect(described_class.new(filters: %w[fil1 some2]).uri.to_s).to eq correct
+        end
+      end
+    end
+
+    describe "::call" do
+      context "with pagination" do
+        # VCS timeout some queries, so we are ok that we r testing partly in here
+        it "should fetch 1k+ of tickers" do
+          expect(subject.call.size).to be > 1_000
+        end
+
+        it "should be array of strings" do
+          expect(subject.call).to all(be_an(String))
         end
       end
     end

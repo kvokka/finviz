@@ -21,6 +21,10 @@ module Finviz
       it "all tickers should contain chart" do
         expect(subject.map(&:chart)).to all(be_a String)
       end
+
+      it "all tickers should contain chart" do
+        expect(subject.map(&:path)).to all(be_a String)
+      end
     end
   end
 end

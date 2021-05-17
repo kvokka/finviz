@@ -40,7 +40,9 @@ module Finviz
       @results ||= all_pages.map do |page|
         page.html.css("#ticker").map do |xpath|
           ticker = xpath.children.text
-          OpenStruct.new ticker: ticker, chart: "https://charts2.finviz.com/chart.ashx?t=#{ticker}&ty=c&ta=1&p=d&s=l"
+          OpenStruct.new path: "https://finviz.com/quote.ashx?t=#{ticker}",
+                         ticker: ticker,
+                         chart: "https://charts2.finviz.com/chart.ashx?t=#{ticker}&ty=c&ta=1&p=d&s=l"
         end
       end
     end

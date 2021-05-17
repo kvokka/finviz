@@ -17,7 +17,14 @@ module Finviz
 
   extend Dry::Configurable
 
-  setting :timeout, 30 # seconds
+  setting :timeout, 120 # seconds
+  setting :quotes_fetcher do
+    # Was manually found by feeding
+    # Finviz::TickersFetcher.new.call.first(400).join(',')
+    # to QuotesFetcher#uri method that max acceptable value is 400
+    # prefer to keep it lower to increase concurrency
+    setting :max_tickers_per_page, 100
+  end
 
   class << self
     def tickers(**opts)

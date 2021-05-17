@@ -25,10 +25,8 @@ module Finviz
 
       async do
         paths.each do |path|
-          semaphore.async do
-            response = internet.get(path.to_s, headers)
-            result << OpenStruct.new(path: path, html: Nokogiri::HTML(response.read))
-          end
+          response = internet.get(path.to_s, headers)
+          result << OpenStruct.new(path: path, html: Nokogiri::HTML(response.read))
         end
       end
     end
@@ -59,10 +57,6 @@ module Finviz
 
     def barrier
       @barrier ||= Async::Barrier.new
-    end
-
-    def semaphore
-      @semaphore ||= Async::Semaphore.new(Finviz.config.concurrency, parent: barrier)
     end
 
     def headers

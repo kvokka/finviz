@@ -18,7 +18,6 @@ module Finviz
   extend Dry::Configurable
 
   setting :timeout, 30 # seconds
-  setting :concurrency, 10
 
   class << self
     def tickers(**opts)

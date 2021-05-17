@@ -6,6 +6,9 @@
 
 Unofficial finviz.com API
 
+All requests are concurrent and lighting fast (using
+[async-http](https://github.com/socketry/async-http) under the hood).
+
 ## Installation
 
 Add this line to your application's Gemfile:
@@ -26,11 +29,27 @@ Or install it yourself as:
 
 ### Fetch tickers list from user filter
 
-Since it is more convenient to use web based interface tos et the filter, there
+Since it is more convenient to use web based interface to set the filters, there
 are 2 options to filter tickers.
 
 ```ruby
+# with raw url
+Finviz.tickers uri: 'https://finviz.com/screener.ashx?v=211&f=fa_pe_u5,sh_price_u3&ft=4'
+=> ["BHAT", "CEPU", "CIH", "CMCM", "DLNG", "EDTK", "FENG", "JOB", "QD", "SND", "SUPV"]
 
+# with manual filters cherry-picking
+Finviz.tickers filters: %w[fa_pe_u5 sh_price_u3]
+=> ["BHAT", "CEPU", "CIH", "CMCM", "DLNG", "EDTK", "FENG", "JOB", "QD", "SND", "SUPV"]
+```
+
+### Fetch quotes
+
+Each quote contain the Hash with ticker stats and link to the chart picture, see
+example:
+
+```ruby
+Finviz.quotes tickers: %w[a c]
+=> [#<OpenStruct ticker="A", chart="https://charts2.finviz.com/chart.ashx?t=C&ty=c&ta=1&p=d&s=l", stats={"Index"=>"S&P 500", "P/E"=>"50.35", "EPS (ttm)"=>"2.60", "Insider Own"=>"0.30%", "Shs Outstand"=>"306.00M", "Perf Week"=>"-2.05%", "Market Cap"=>"39.62B", "Forward P/E"=>"30.11", "EPS next Y"=>"11.78%", "Insider Trans"=>"-21.60%", "Shs Float"=>"303.84M", "Perf Month"=>"-1.60%", "Income"=>"810.00M", "PEG"=>"4.66", "EPS next Q"=>"0.83", "Inst Own"=>"91.60%", "Short Float"=>"0.70%", "Perf Quarter"=>"2.48%", "Sales"=>"5.53B", "P/S"=>"7.16", "EPS this Y"=>"-31.60%", "Inst Trans"=>"0.76%", "Short Ratio"=>"1.29", "Perf Half Y"=>"19.87%", "Book/sh"=>"15.70", "P/B"=>"8.35", "ROA"=>"8.50%", "Target Price"=>"140.23", "Perf Year"=>"60.64%", "Cash/sh"=>"4.40", "P/C"=>"29.81", "EPS next 5Y"=>"10.80%", "ROE"=>"16.70%", "52W Range"=>"78.72 - 137.83", "Perf YTD"=>"10.68%", "Dividend"=>"0.78", "P/FCF"=>"45.69", "EPS past 5Y"=>"12.00%", "ROI"=>"10.00%", "52W High"=>"-4.84%", "Beta"=>"1.01", "Dividend %"=>"0.59%", "Quick Ratio"=>"1.60", "Sales past 5Y"=>"5.70%", "Gross Margin"=>"53.30%", "52W Low"=>"66.60%", "ATR"=>"2.09", "Employees"=>"16400", "Current Ratio"=>"2.10", "Sales Q/Q"=>"14.10%", "Oper. Margin"=>"17.30%", "RSI (14)"=>"49.02", "Volatility"=>"1.56% 1.40%", "Optionable"=>"Yes", "Debt/Eq"=>"0.52", "EPS Q/Q"=>"48.10%", "Profit Margin"=>"14.60%", "Rel Volume"=>"0.47", "Prev Close"=>"130.02", "Shortable"=>"Yes", "LT Debt/Eq"=>"0.45", "Earnings"=>"May 25 AMC", "Payout"=>"27.40%", "Avg Volume"=>"1.65M", "Price"=>"131.15", "Recom"=>"1.90", "SMA20"=>"-1.68%", "SMA50"=>"2.23%", "SMA200"=>"13.91%", "Volume"=>"770,838", "Change"=>"0.87%"}>, #<OpenStruct ticker="C", chart="https://charts2.finviz.com/chart.ashx?t=C&ty=c&ta=1&p=d&s=l", stats={"Index"=>"S&P 500", "P/E"=>"10.50", "EPS (ttm)"=>"7.29", "Insider Own"=>"0.20%", "Shs Outstand"=>"2.08B", "Perf Week"=>"1.97%", "Market Cap"=>"155.63B", "Forward P/E"=>"9.32", "EPS next Y"=>"-8.81%", "Insider Trans"=>"-1.30%", "Shs Float"=>"2.04B", "Perf Month"=>"5.54%", "Income"=>"15.26B", "PEG"=>"0.96", "EPS next Q"=>"2.00", "Inst Own"=>"78.80%", "Short Float"=>"1.20%", "Perf Quarter"=>"20.32%", "Sales"=>"53.48B", "P/S"=>"2.91", "EPS this Y"=>"-41.10%", "Inst Trans"=>"0.52%", "Short Ratio"=>"1.26", "Perf Half Y"=>"56.47%", "Book/sh"=>"87.55", "P/B"=>"0.87", "ROA"=>"0.70%", "Target Price"=>"85.23", "Perf Year"=>"82.03%", "Cash/sh"=>"486.62", "P/C"=>"0.16", "EPS next 5Y"=>"10.91%", "ROE"=>"8.60%", "52W Range"=>"38.76 - 76.84", "Perf YTD"=>"24.16%", "Dividend"=>"2.04", "P/FCF"=>"7.76", "EPS past 5Y"=>"-2.70%", "ROI"=>"6.80%", "52W High"=>"-0.36%", "Beta"=>"1.90", "Dividend %"=>"2.66%", "Quick Ratio"=>"-", "Sales past 5Y"=>"-0.20%", "Gross Margin"=>"-", "52W Low"=>"97.52%", "ATR"=>"1.72", "Employees"=>"211000", "Current Ratio"=>"-", "Sales Q/Q"=>"-26.90%", "Oper. Margin"=>"64.00%", "RSI (14)"=>"65.40", "Volatility"=>"2.44% 2.21%", "Optionable"=>"Yes", "Debt/Eq"=>"2.70", "EPS Q/Q"=>"240.40%", "Profit Margin"=>"28.50%", "Rel Volume"=>"0.72", "Prev Close"=>"75.29", "Shortable"=>"Yes", "LT Debt/Eq"=>"1.35", "Earnings"=>"Apr 15 BMO", "Payout"=>"27.80%", "Avg Volume"=>"19.50M", "Price"=>"76.56", "Recom"=>"2.10", "SMA20"=>"5.13%", "SMA50"=>"5.42%", "SMA200"=>"30.60%", "Volume"=>"14,074,177", "Change"=>"1.69%"}>]
 ```
 
 ## Development
@@ -41,7 +60,7 @@ To install this gem onto your local machine, run `bundle exec rake install`. To 
 
 ## Contributing
 
-Bug reports and pull requests are welcome on GitHub at https://github.com/[USERNAME]/finviz. This project is intended to be a safe, welcoming space for collaboration, and contributors are expected to adhere to the [code of conduct](https://github.com/[USERNAME]/finviz/blob/master/CODE_OF_CONDUCT.md).
+Bug reports and pull requests are welcome on GitHub at https://github.com/kvokka/finviz. This project is intended to be a safe, welcoming space for collaboration, and contributors are expected to adhere to the [code of conduct](https://github.com/[USERNAME]/finviz/blob/master/CODE_OF_CONDUCT.md).
 
 ## License
 
@@ -49,4 +68,4 @@ The gem is available as open source under the terms of the [MIT License](https:/
 
 ## Code of Conduct
 
-Everyone interacting in the Finviz project's codebases, issue trackers, chat rooms and mailing lists is expected to follow the [code of conduct](https://github.com/[USERNAME]/finviz/blob/master/CODE_OF_CONDUCT.md).
+Everyone interacting in the Finviz project's codebases, issue trackers, chat rooms and mailing lists is expected to follow the [code of conduct](https://github.com/kvokka/finviz/blob/master/CODE_OF_CONDUCT.md).

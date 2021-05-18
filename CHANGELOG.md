@@ -12,3 +12,7 @@
 ## [0.2.1] - 2021-05-17
 
 - Add path to quotes fetcher output
+
+## [0.3.0] - 2021-05-19
+
+- Quotes fetcher refactoring. `QuotesFetcher.call` Output syntax changed.

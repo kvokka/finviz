@@ -1,29 +1,28 @@
 # frozen_string_literal: true
 
 module Finviz
+  TICKERS = %w[a m c].freeze
   RSpec.describe QuotesFetcher do
     describe "#call" do
-      let(:tickers) { %w[a m c] }
+      let(:tickers) { TICKERS }
       before do
         allow(Finviz.config.quotes_fetcher).to receive(:max_tickers_per_page).and_return(2)
       end
 
       subject { described_class.new(tickers: tickers).call }
 
-      it "should fetch all tickers" do
-        expect(subject.size).to eq tickers.size
+      it "should fetch 3 tickers" do
+        expect(subject.to_h.size).to eq tickers.size
       end
 
-      it "all tickers should contain stats" do
-        expect(subject.map(&:stats)).to all(be_a Hash)
-      end
+      TICKERS.each do |ticker|
+        it "#{ticker} should respond to ticker method" do
+          expect(subject.send(ticker)).to be_a Quote
+        end
 
-      it "all tickers should contain chart" do
-        expect(subject.map(&:chart)).to all(be_a String)
-      end
-
-      it "all tickers should contain chart" do
-        expect(subject.map(&:path)).to all(be_a String)
+        it "#{ticker} should respond to ticker key" do
+          expect(subject[ticker]).to be_a Quote
+        end
       end
     end
   end

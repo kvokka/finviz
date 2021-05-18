@@ -38,12 +38,20 @@ module Finviz
 
     def normalize_uri(uri, filters)
       uri = URI(uri || base_uri)
-      query = CGI.parse(uri.query || "").tap do |params|
-        params["f"] = filters&.join(",") if filters&.any?
+
+      @uri = URI::HTTPS.build(
+        host: base_uri,
+        path: base_path,
+        query: CGI.unescape(URI.encode_www_form(query(uri, filters)))
+      )
+    end
+
+    def query(uri, filters)
+      CGI.parse(uri.query || "").tap do |params|
+        params["f"] = filters.join(",") if filters&.any?
         params["v"] = finviz_view_type
         params.delete("r") # remove offset if it was provided
       end
-      @uri = URI::HTTPS.build(host: base_uri, path: base_path, query: CGI.unescape(URI.encode_www_form(query)))
     end
 
     def base_uri

@@ -10,42 +10,16 @@ module Finviz
     attr_reader :tickers
 
     def call
-      add_stats_to_results
-      add_charts_to_results
-      results.flatten!
+      Quotes.new.tap do |result|
+        all_pages.each do |page|
+          page.html.css("#ticker").zip(page.html.css(".snapshot-table2")).each do |(ticker_xpath, table_xpath)|
+            result.add_quote_from_xpath(ticker_xpath, table_xpath)
+          end
+        end
+      end
     end
 
     private
-
-    def add_stats_to_results
-      all_pages.each_with_index do |page, page_number|
-        page.html.css(".snapshot-table2").each_with_index do |xpath, selector_offset|
-          current = results[page_number][selector_offset]
-          current.stats = xpath.css(".table-dark-row").map { |row| row.css("td").map(&:text) }
-                               .flatten.each_slice(2).to_h
-        end
-      end
-    end
-
-    def add_charts_to_results
-      all_pages.each_with_index do |page, page_number|
-        page.html.css("#chart1").each_with_index do |xpath, selector_offset|
-          current = results[page_number][selector_offset]
-          current.chart = xpath.attributes["src"].text
-        end
-      end
-    end
-
-    def results
-      @results ||= all_pages.map do |page|
-        page.html.css("#ticker").map do |xpath|
-          ticker = xpath.children.text
-          OpenStruct.new path: "https://finviz.com/quote.ashx?t=#{ticker}",
-                         ticker: ticker,
-                         chart: "https://charts2.finviz.com/chart.ashx?t=#{ticker}&ty=c&ta=1&p=d&s=l"
-        end
-      end
-    end
 
     def all_pages
       @all_pages ||= Crawler.call(paths: paths)

@@ -1,7 +1,8 @@
 [![CircleCI](https://circleci.com/gh/kvokka/finviz.svg?style=svg&circle-token=804e72e82fd4ccedc8f06cb332cc53d21e83535c)](https://circleci.com/gh/kvokka/finviz)
 [![Gem Version](https://img.shields.io/gem/v/finviz.svg)](https://rubygems.org/gems/finviz)
 [![Reviewed by Hound](https://img.shields.io/badge/Reviewed_by-Hound-8E64B0.svg)](https://houndci.com)
-[![Code Climate](https://codeclimate.com/github/kvokka/finviz/badges/gpa.svg)](https://codeclimate.com/github/kvokka/finviz)
+[![Maintainability](https://api.codeclimate.com/v1/badges/3e73fca4653a06e1a607/maintainability)](https://codeclimate.com/github/kvokka/finviz/maintainability)
+[![Test Coverage](https://api.codeclimate.com/v1/badges/3e73fca4653a06e1a607/test_coverage)](https://codeclimate.com/github/kvokka/finviz/test_coverage)
 
 # Finviz
 

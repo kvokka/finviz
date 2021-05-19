@@ -1,5 +1,6 @@
 version: 2.1
 defaults: &defaults
+  working_directory: ~/repo
   docker:
     - image: circleci/ruby:2.6.3-stretch-node
       environment:
@@ -31,29 +32,38 @@ commands:
           key: v1-dependencies-{{ checksum "Gemfile.lock" }}
 
 jobs:
-  rspec:
+  download_test_reporter:
     <<: *defaults
     steps:
+      - run:
+          name:  Download cc-test-reporter
+          command: |
+            mkdir -p tmp/
+            curl -L https://codeclimate.com/downloads/test-reporter/test-reporter-latest-linux-amd64 > ./tmp/cc-test-reporter
+            chmod +x ./tmp/cc-test-reporter
+      - persist_to_workspace:
+          root: tmp
+          paths:
+            - cc-test-reporter
+  rspec:
+    <<: *defaults
+    environment:
+      COVERAGE: "1"
+      CI: "1"
+    steps:
       - prepare
+      - attach_workspace:
+          at: ~/repo/tmp
       - run:
           name: Rspec
           command: |
-            mkdir /tmp/test-results
+            bundle exec rspec
 
-            TEST_FILES="$(circleci tests glob "spec/**/*_spec.rb" | circleci tests split --split-by=timings)"
-
-            bundle exec rspec --format progress \
-                            --format RspecJunitFormatter \
-                            --out /tmp/test-results/rspec.xml \
-                            --tag ~type:performance \
-                            $TEST_FILES
-      # collect reports
-      - store_test_results:
-          path: /tmp/test-results
-      - store_artifacts:
-          path: /tmp/test-results
-          destination: test-results
-
+            ./tmp/cc-test-reporter format-coverage -t simplecov -o tmp/codeclimate.json coverage/coverage.json
+      - persist_to_workspace:
+          root: tmp
+          paths:
+            - codeclimate.json
   rubocop:
     <<: *defaults
     steps:
@@ -61,10 +71,27 @@ jobs:
       - run:
           name: Rubocop
           command: bundle exec rubocop
+  upload-coverage:
+    <<: *defaults
+    environment:
+      CC_TEST_REPORTER_ID: 83001b65b7434ac2263f7534d4f1fc3376ce8f73662082682947b2875d314981
+    steps:
+      - attach_workspace:
+          at: ~/repo/tmp
+      - run:
+          name: Upload coverage results to Code Climate
+          command: |
+            ./tmp/cc-test-reporter upload-coverage -i tmp/codeclimate.json
 
 workflows:
   version: 2
   pipeline:
     jobs:
-      - rspec
+      - download_test_reporter
+      - rspec:
+          requires:
+            - download_test_reporter
       - rubocop
+      - upload-coverage:
+          requires:
+            - rspec

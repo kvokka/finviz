@@ -1,7 +1,7 @@
 # frozen_string_literal: true
 
 module Finviz
-  RSpec.describe Quote do
+  RSpec.describe Quote, vcr: false do
     subject { described_class.new ticker: "a" }
     describe "#path" do
       it "should follow the pattern" do

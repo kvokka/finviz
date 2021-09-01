@@ -3,12 +3,11 @@
 module Finviz
   # Fetch the details of the security
   class QuotesFetcher
-
     def self.dangerous_methods
       @dangerous_methods ||= OpenStruct.instance_methods
-        .map(&:to_s)
-        .select {|m| m.length <=5 }
-        .reject {|m| m =~ /!|\?|\>|\<|\=|_|\[|\]/ }
+                                       .map(&:to_s)
+                                       .select { |m| m.length <= 5 }
+                                       .reject { |m| m =~ /!|\?|>|<|=|_|\[|\]/ }
     end
 
     def initialize(tickers: [])
@@ -17,6 +16,7 @@ module Finviz
 
     attr_reader :tickers
 
+    # rubocop:disable Style/DocumentDynamicEvalDefinition
     def call
       Quotes.new.tap do |result|
         all_pages.each do |page|
@@ -25,9 +25,10 @@ module Finviz
           end
         end
 
-        self.class.dangerous_methods.each { |m| result.instance_eval("undef :#{m}") }
+        self.class.dangerous_methods.each { |m| result.instance_eval("undef :#{m}", __FILE__, __LINE__) }
       end
     end
+    # rubocop:enable Style/DocumentDynamicEvalDefinition
 
     private
 

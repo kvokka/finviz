@@ -3,6 +3,14 @@
 module Finviz
   # Fetch the details of the security
   class QuotesFetcher
+
+    def self.dangerous_methods
+      @dangerous_methods ||= OpenStruct.instance_methods
+        .map(&:to_s)
+        .select {|m| m.length <=5 }
+        .reject {|m| m =~ /!|\?|\>|\<|\=|_|\[|\]/ }
+    end
+
     def initialize(tickers: [])
       @tickers = Array(tickers)
     end
@@ -16,6 +24,8 @@ module Finviz
             result.add_quote_from_xpath(ticker_xpath, table_xpath)
           end
         end
+
+        self.class.dangerous_methods.each { |m| result.instance_eval("undef :#{m}") }
       end
     end
 
